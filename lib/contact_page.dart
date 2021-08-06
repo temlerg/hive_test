@@ -25,13 +25,13 @@ class ContactPage extends StatelessWidget {
   }
 
   Widget _buildListView() {
-    return WatchBoxBuilder(
-      box: Hive.box('contacts'),
-      builder: (context, contactsBox) {
+    return ValueListenableBuilder(
+      valueListenable: Hive.box<Contact>('contact').listenable(),
+      builder: (context, Box<Contact> box, _) {
         return ListView.builder(
-          itemCount: contactsBox.length,
+          itemCount: box.length,
           itemBuilder: (context, index) {
-            final contact = contactsBox.getAt(index) as Contact;
+            final contact = box.getAt(index) as Contact;
 
             return ListTile(
               title: Text(contact.name),
@@ -42,7 +42,7 @@ class ContactPage extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.refresh),
                     onPressed: () {
-                      contactsBox.putAt(
+                      box.putAt(
                         index,
                         Contact('${contact.name}*', contact.age + 1),
                       );
@@ -51,7 +51,7 @@ class ContactPage extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () {
-                      contactsBox.deleteAt(index);
+                      box.deleteAt(index);
                     },
                   )
                 ],
